@@ -7,12 +7,12 @@ require 'rquest'
 Gem::Specification.new do |spec|
   spec.name          = "tcorp_authorize"
   spec.version       = TcorpAuthorize::VERSION
-  spec.authors       = ["Tyrel Richey"]
-  spec.email         = ["tyrel@tycorp.org"]
+  spec.authors       = ["The Tyrel Corporation"]
+	spec.email         = ["cloud.tycorp@gmail.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = %q{A non explicit rest client for authorize payments}
+  spec.description   = %q{This is an unofficial rest client gem for the Authroize payment gateway service. The official version does not allow for submission of extra info like billing and shipping information and customer meta data like their email. Maybe the offical gem could be hacked but we opted instead to make this gem. We will add all of the authorize features as well as documentation in the future. Right now the specs should provide our two supported use cases. We hope this helps.}
+  spec.homepage      = "https://github.com/thetyrelcorporation/tcorp_authorize"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or

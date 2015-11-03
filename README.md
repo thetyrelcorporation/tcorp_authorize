@@ -1,8 +1,6 @@
 # TcorpAuthorize
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/tcorp_authorize`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+This is an unofficial rest client gem for the Authroize payment gateway service. The official version does not allow for submission of extra info like billing and shipping information and customer meta data like their email. Maybe the offical gem could be hacked but we opted instead to make this gem. We will add all of the authorize features as well as documentation in the future. Right now the specs should provide our two supported use cases. We hope this helps.
 
 ## Installation
 
