@@ -12,11 +12,6 @@ test_cc_attrs = {
 	cc_csv: '123'
 }
 
-transaction_attrs = {
-	amount: 100
-}
-
-
 describe TcorpAuthorize do
 	it 'Should have action to key that conerts a supplied action into a proper json key for authorize requests' do
 		result = TcorpAuthorize::action_to_key( "createTransactionRequest"  )
@@ -45,6 +40,26 @@ describe TcorpAuthorize do
 		expect(TcorpAuthorize::Client).to respond_to(:new)
 		client = TcorpAuthorize::Client.new( auth_attrs )
 		expect(client.class).to be TcorpAuthorize::Client
+	end
+
+	# It is up to the caller to check for errors and handle acordingly
+	it 'Should handle errors by passing the Authorize error hash to caller' do
+		client = TcorpAuthorize::Client.new( auth_attrs )
+		req_type = "createTransactionRequest"
+		req_attrs = { 
+			"transactionType" => "authCaptureTransaction",
+			"payment" => { 
+				"creditCard": { 
+					"cardNumber": test_cc_attrs[:cc_number],
+					"expirationDate": test_cc_attrs[:cc_exp],
+					"cardCode": test_cc_attrs[:cc_csv]
+				}  
+			}
+		}
+		expect(client).to respond_to(:send_request)
+		response = client.send_request(req_type, req_attrs)
+		expect(response.class).to be Hash
+		expect(response["messages"]["resultCode"]).to eq( "Error" )
 	end
 
 	it 'Should post an AIM payment successfully' do
@@ -101,8 +116,45 @@ describe TcorpAuthorize do
 		expect(response.class).to be Hash
 		expect(response["messages"]["resultCode"]).to eq( "Ok" )
 	end
-
-	it 'Should store errors gracefully' do
+	
+	it 'Should post Authorize Card' do
+		client = TcorpAuthorize::Client.new( auth_attrs )
+		req_type = "createTransactionRequest"
+		req_attrs = { 
+			"transactionType" => "authOnlyTransaction",
+			"amount" => "#{rand(100) + 1}",
+			"payment" => { 
+				"creditCard": { 
+					"cardNumber": test_cc_attrs[:cc_number],
+					"expirationDate": test_cc_attrs[:cc_exp],
+					"cardCode": test_cc_attrs[:cc_csv]
+				}  
+			},
+		}
+		expect(client).to respond_to(:send_request)
+		response = client.send_request(req_type, req_attrs)
+		expect(response.class).to be Hash
+		expect(response["messages"]["resultCode"]).to eq( "Ok" )
+	end
+	
+	it 'Should capture a previously authorized credit card' do
+		client = TcorpAuthorize::Client.new( auth_attrs )
+		req_type = "createTransactionRequest"
+		req_attrs = { 
+			"transactionType" => "authCaptureTransaction",
+			"amount" => "#{rand(100) + 1}",
+			"payment" => { 
+				"creditCard": { 
+					"cardNumber": test_cc_attrs[:cc_number],
+					"expirationDate": test_cc_attrs[:cc_exp],
+					"cardCode": test_cc_attrs[:cc_csv]
+				}  
+			},
+		}
+		expect(client).to respond_to(:send_request)
+		response = client.send_request(req_type, req_attrs)
+		expect(response.class).to be Hash
+		expect(response["messages"]["resultCode"]).to eq( "Ok" )
 	end
 
 	it 'Should post recuring payments' do
@@ -128,16 +180,13 @@ describe TcorpAuthorize do
 						}
 				},
 				"billTo": {
-						"firstName": "John",
-						"lastName": "Smith"
+						"firstName": "Testing",
+						"lastName": (0..7).to_a.map{|e| ('A'..'Z').to_a.sample}.join('')
 				}
 		}
 		expect(client).to respond_to(:send_request)
 		response = client.send_request(req_type, req_attrs)
 		expect(response.class).to be Hash
 		expect(response["messages"]["resultCode"]).to eq( "Ok" )
-	end
-
-	it 'Should handle recuring payment errors gracefully' do
 	end
 end
